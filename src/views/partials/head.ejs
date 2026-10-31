@@ -14,8 +14,14 @@
   <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/splash.js"></script>
 </head>
 <body class="<%= inPanel ? 'has-nav' : '' %>">
+<div class="splash" aria-hidden="true">
+  <div class="splash-glow"></div>
+  <img src="/images/logo.png" alt="" width="120" height="144">
+  <div class="splash-name"><%= config.businessName %></div>
+</div>
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="/"><img src="/images/logo.png" alt="" width="34" height="41"><span><%= inPanel ? 'Panel del negocio' : config.businessName %></span></a>
