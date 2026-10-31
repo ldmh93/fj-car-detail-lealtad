@@ -1,0 +1,67 @@
+<%- include('../partials/head') %>
+<h1>Hola, <%= businessUser.display_name.split(' ')[0] %></h1>
+
+<div class="actions-grid">
+  <a class="btn btn-lg" href="/panel/escanear"><%- include('../partials/icon', { name: 'qr' }) %>Escanear QR</a>
+  <a class="btn btn-lg btn-secondary" href="/panel/escanear#nfc"><%- include('../partials/icon', { name: 'nfc' }) %>Leer NFC</a>
+</div>
+
+<form class="card search" method="get" action="/panel/clientes" role="search">
+  <label class="visually-hidden" for="q">Buscar cliente</label>
+  <input id="q" name="q" type="search" placeholder="Buscar por nombre o teléfono" autocomplete="off">
+  <button class="btn" type="submit" aria-label="Buscar"><%- include('../partials/icon', { name: 'search' }) %></button>
+</form>
+
+<div class="tiles">
+  <div class="tile"><span class="n"><%= summary.stamps_today %></span><span class="l">sellos hoy</span></div>
+  <div class="tile"><span class="n"><%= summary.rewards_available %></span><span class="l">recompensas por canjear</span></div>
+  <div class="tile"><span class="n"><%= summary.customers_total %></span><span class="l">clientes</span></div>
+</div>
+
+<% if (pendingRewards.length) { %>
+<section class="card">
+  <h2>Recompensas por canjear</h2>
+  <ul class="list">
+    <% pendingRewards.forEach((c) => { %>
+      <li><a class="item" href="/panel/cliente/<%= c.id %>">
+        <span class="main-text"><span class="title"><%= c.name %></span><span class="sub">Desde <%= fmt.date(c.issued_at) %></span></span>
+        <span class="badge badge-reward">Disponible</span>
+      </a></li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>
+
+<section class="card">
+  <h2>Enlace de registro para clientes</h2>
+  <p class="muted small">Compártelo por WhatsApp o redes. Quien lo abra podrá crear su tarjeta.</p>
+  <div class="copy-row">
+    <label class="visually-hidden" for="signup-url">Enlace de registro</label>
+    <input id="signup-url" type="text" readonly value="<%= signupUrl %>">
+    <button class="btn" type="button" data-copy="#signup-url"><%- include('../partials/icon', { name: 'copy' }) %><span>Copiar</span></button>
+  </div>
+  <div class="row mt">
+    <a class="btn btn-secondary grow" href="<%= whatsappUrl %>" target="_blank" rel="noopener"><%- include('../partials/icon', { name: 'send' }) %>Enviar por WhatsApp</a>
+    <a class="btn btn-secondary grow" href="/panel/compartir"><%- include('../partials/icon', { name: 'print' }) %>QR para el local</a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Actividad reciente</h2>
+  <% if (!activity.length) { %>
+    <p class="muted">Aún no hay actividad. Cuando registres el primer sello aparecerá aquí.</p>
+  <% } else { %>
+    <ul class="timeline">
+      <% activity.forEach((e) => { %>
+        <li>
+          <div>
+            <div class="what"><a href="/panel/cliente/<%= e.customer_id %>"><%= e.customer_name %></a> · <%= fmt.eventLabel(e) %></div>
+            <div class="meta"><%= fmt.dateTime(e.created_at) %><%= e.user_name ? ` · ${e.user_name}` : '' %></div>
+          </div>
+          <span class="badge badge-muted"><%= e.stamps_after %>/10</span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

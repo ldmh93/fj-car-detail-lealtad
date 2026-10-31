@@ -1,0 +1,12 @@
+<%
+  const total = 10;
+  const filled = Math.min(stamps, total);
+%>
+<ol class="stamps" aria-label="<%= filled %> de <%= total %> sellos">
+  <% for (let i = 1; i <= total; i++) { %>
+    <li class="stamp <%= i <= filled ? 'filled' : '' %> <%= i === total ? 'last' : '' %>">
+      <% if (i <= filled) { %><%- include('icon', { name: 'check' }) %><span class="visually-hidden">Sello <%= i %></span><% } else if (i === total) { %><%- include('icon', { name: 'gift' }) %><span class="visually-hidden">Recompensa</span><% } else { %><%= i %><% } %>
+    </li>
+  <% } %>
+</ol>
+<div class="progress" aria-hidden="true"><span class="p<%= filled %>"></span></div>

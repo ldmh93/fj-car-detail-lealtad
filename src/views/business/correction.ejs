@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<div class="narrow">
+  <p><a href="/panel/cliente/<%= target.id %>">← <%= target.name %></a></p>
+  <h1>Corregir sellos</h1>
+  <p class="muted">Úsalo solo para arreglar errores (por ejemplo, un sello agregado al cliente equivocado). Queda registrado con tu nombre, la fecha y el motivo.</p>
+  <p>Ahora tiene <strong><%= card.stamps %> de 10</strong> sellos<%= card.status === 'reward_pending' ? ' y una recompensa disponible (si restas sellos, la recompensa se anula)' : '' %>.</p>
+  <% if (errors.form) { %><div class="alert alert-error"><%= errors.form %></div><% } %>
+  <form class="card" method="post" action="/panel/cliente/<%= target.id %>/correccion" data-busy>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="request_id" value="<%= requestId %>">
+    <div class="field <%= errors.delta ? 'has-error' : '' %>">
+      <label for="delta">Cambio</label>
+      <select id="delta" name="delta" required>
+        <option value="">Elige…</option>
+        <% for (let d = -card.stamps; d <= 10 - card.stamps; d++) { if (d === 0) continue; %>
+          <option value="<%= d %>" <%= String(values.delta) === String(d) ? 'selected' : '' %>><%= d > 0 ? `Sumar ${d}` : `Restar ${-d}` %> → quedaría en <%= card.stamps + d %></option>
+        <% } %>
+      </select>
+      <% if (errors.delta) { %><div class="error"><%= errors.delta %></div><% } %>
+    </div>
+    <div class="field <%= errors.reason ? 'has-error' : '' %>">
+      <label for="reason">Motivo</label>
+      <textarea id="reason" name="reason" maxlength="200" required><%= values.reason || '' %></textarea>
+      <% if (errors.reason) { %><div class="error"><%= errors.reason %></div><% } %>
+    </div>
+    <div class="field <%= errors.password ? 'has-error' : '' %>">
+      <label for="password">Tu contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <div class="hint">Se pide para confirmar que eres tú.</div>
+      <% if (errors.password) { %><div class="error"><%= errors.password %></div><% } %>
+    </div>
+    <button class="btn btn-lg btn-block" type="submit">Guardar corrección</button>
+  </form>
+</div>
+<%- include('../partials/foot') %>

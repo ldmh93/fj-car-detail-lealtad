@@ -1,0 +1,19 @@
+<%- include('../partials/head') %>
+<div class="narrow">
+  <div class="card center">
+    <%- include('../partials/icon', { name: 'gift' }) %>
+    <h1>Canjear recompensa</h1>
+    <div class="confirm-name"><%= target.name %></div>
+    <p class="muted">Teléfono <%= fmt.maskPhone(target.phone) %></p>
+    <p>Recompensa: <strong><%= config.rewardText %></strong><br><span class="small muted">Disponible desde el <%= fmt.date(reward.issued_at) %></span></p>
+  </div>
+  <form method="post" action="/panel/cliente/<%= target.id %>/canjear" data-busy>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="request_id" value="<%= requestId %>">
+    <input type="hidden" name="reward_id" value="<%= reward.id %>">
+    <p class="center">Marca la recompensa como canjeada cuando entregues el servicio gratuito. La tarjeta volverá a 0 sellos.</p>
+    <button class="btn btn-lg btn-block btn-reward" type="submit">Marcar como canjeada</button>
+  </form>
+  <p class="center mt"><a href="/panel/cliente/<%= target.id %>">Cancelar</a></p>
+</div>
+<%- include('../partials/foot') %>

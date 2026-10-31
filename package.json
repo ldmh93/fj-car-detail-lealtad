@@ -1,0 +1,29 @@
+{
+  "name": "tarjetas-de-lealtad",
+  "version": "1.0.0",
+  "description": "Tarjetas de lealtad digitales con QR y NFC para un negocio de detallado y lavado de autos.",
+  "private": true,
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch-path=src --watch-path=public src/server.js",
+    "crear-usuario": "node src/scripts/create-business-user.js",
+    "cliente-prueba": "node src/scripts/create-test-customer.js",
+    "respaldo": "node src/scripts/backup.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "dotenv": "^18.0.9",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.2",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4"
+  }
+}

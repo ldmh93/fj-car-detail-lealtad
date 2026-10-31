@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<p><a href="/panel/cliente/<%= target.id %>">← <%= target.name %></a></p>
+<h1>Etiquetas NFC</h1>
+<p class="muted">Una etiqueta NFC (llavero o sticker) es una forma extra de identificar al cliente. Solo guarda un enlace con un código aleatorio: no contiene su nombre, teléfono ni sellos. Siempre confirmarás antes de agregar un sello.</p>
+
+<section class="card">
+  <h2>Vincular una etiqueta nueva</h2>
+  <form method="post" action="/panel/cliente/<%= target.id %>/nfc" data-busy>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="field">
+      <label for="label">Nombre de la etiqueta (opcional)</label>
+      <input id="label" name="label" type="text" maxlength="40" placeholder="Ej. Llavero azul">
+    </div>
+    <button class="btn btn-block" type="submit"><%- include('../partials/icon', { name: 'plus' }) %>Crear y grabar etiqueta</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Etiquetas de <%= target.name %></h2>
+  <% if (!tags.length) { %>
+    <p class="muted">No tiene etiquetas NFC.</p>
+  <% } else { %>
+    <ul class="list">
+      <% tags.forEach((t) => { %>
+        <li class="item">
+          <span class="main-text">
+            <span class="title"><%= t.label || `Etiqueta #${t.id}` %></span>
+            <span class="sub">Vinculada el <%= fmt.date(t.created_at) %><%= t.created_by_name ? ` por ${t.created_by_name}` : '' %><%= t.status === 'revoked' ? ` · revocada el ${fmt.date(t.revoked_at)}` : '' %></span>
+          </span>
+          <% if (t.status === 'active') { %>
+            <a class="btn btn-secondary btn-small" href="/panel/cliente/<%= target.id %>/nfc/<%= t.id %>/grabar">Grabar</a>
+            <form method="post" action="/panel/cliente/<%= target.id %>/nfc/<%= t.id %>/revocar" data-confirm="¿Revocar esta etiqueta? Dejará de identificar al cliente.">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-danger btn-small" type="submit">Revocar</button>
+            </form>
+          <% } else { %>
+            <span class="badge badge-muted">Revocada</span>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+    <p class="small muted mt">¿Se perdió una etiqueta? Revócala y vincula una nueva.</p>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

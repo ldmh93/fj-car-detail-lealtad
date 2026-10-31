@@ -1,0 +1,23 @@
+<%- include('../partials/head') %>
+<h1>Clientes</h1>
+<form class="card search" method="get" action="/panel/clientes" role="search">
+  <label class="visually-hidden" for="q">Buscar cliente</label>
+  <input id="q" name="q" type="search" placeholder="Nombre o teléfono" value="<%= q %>" autocomplete="off" <%= q ? '' : 'autofocus' %>>
+  <button class="btn" type="submit" aria-label="Buscar"><%- include('../partials/icon', { name: 'search' }) %></button>
+</form>
+<section class="card">
+  <% if (!results.length) { %>
+    <p class="muted"><%= q ? 'No encontramos clientes con esa búsqueda. Revisa el nombre o prueba con los últimos dígitos del teléfono.' : 'Todavía no hay clientes. Comparte el enlace de registro desde Inicio.' %></p>
+  <% } else { %>
+    <p class="small muted"><%= q ? `Resultados para “${q}”` : 'Clientes con actividad reciente' %></p>
+    <ul class="list">
+      <% results.forEach((c) => { %>
+        <li><a class="item" href="/panel/cliente/<%= c.id %>">
+          <span class="main-text"><span class="title"><%= c.name %></span><span class="sub"><%= fmt.formatPhone(c.phone) %></span></span>
+          <% if (c.card_status === 'reward_pending') { %><span class="badge badge-reward">Recompensa</span><% } else { %><span class="badge"><%= c.stamps %>/10</span><% } %>
+        </a></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

@@ -1,0 +1,13 @@
+{
+  "name": "FJ Car Detail · Tarjeta de lealtad",
+  "short_name": "FJ Car Detail",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f7fb",
+  "theme_color": "#2a6ba2",
+  "lang": "es",
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

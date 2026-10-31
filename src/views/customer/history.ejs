@@ -1,0 +1,40 @@
+<%- include('../partials/head') %>
+<p><a href="/mi-tarjeta">← Volver a mi tarjeta</a></p>
+<h1>Mi historial</h1>
+<div class="tiles">
+  <div class="tile"><span class="n"><%= stats.visits %></span><span class="l">visitas</span></div>
+  <div class="tile"><span class="n"><%= stats.redeemed %></span><span class="l">canjeadas</span></div>
+  <div class="tile"><span class="n"><%= stats.last_visit ? fmt.shortDate(stats.last_visit) : '—' %></span><span class="l">última visita</span></div>
+</div>
+
+<% const available = rewards.find((r) => r.status === 'available'); %>
+<section class="card">
+  <h2>Recompensa</h2>
+  <% if (available) { %>
+    <p><span class="badge badge-reward">Disponible</span> Desde el <%= fmt.date(available.issued_at) %>. Pide <%= config.rewardText %> en tu próxima visita.</p>
+  <% } else { %>
+    <p class="muted">Aún no tienes una recompensa disponible. Completa 10 sellos para obtener <%= config.rewardText %>.</p>
+  <% } %>
+  <% const redeemed = rewards.filter((r) => r.status === 'redeemed'); if (redeemed.length) { %>
+    <ul class="timeline">
+      <% redeemed.forEach((r) => { %><li><span>Recompensa canjeada</span><span class="meta"><%= fmt.dateTime(r.redeemed_at) %></span></li><% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Movimientos</h2>
+  <% if (!events.length) { %>
+    <p class="muted">Todavía no hay movimientos. Tu primera visita aparecerá aquí.</p>
+  <% } else { %>
+    <ul class="timeline">
+      <% events.forEach((e) => { %>
+        <li>
+          <div><div class="what"><%= fmt.eventLabel(e, { forCustomer: true }) %></div><div class="meta"><%= fmt.dateTime(e.created_at) %></div></div>
+          <span class="badge badge-muted"><%= e.stamps_after %>/10</span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

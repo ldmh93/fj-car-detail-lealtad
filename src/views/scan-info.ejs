@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<div class="narrow center">
+  <img class="hero-logo" src="/images/logo.png" alt="Logo de <%= config.businessName %>" width="110" height="132">
+  <div class="card">
+    <% if (valid) { %>
+      <h1>Tarjeta de lealtad</h1>
+      <p>Este código identifica una tarjeta de lealtad de <%= config.businessName %>. Por seguridad no muestra datos del cliente.</p>
+      <p class="muted small">Los sellos solo los registra el personal del negocio después de confirmar la visita.</p>
+    <% } else { %>
+      <h1>Código no disponible</h1>
+      <p>Este código ya no está activo. Si es tu tarjeta, entra a tu cuenta para ver tu código actualizado.</p>
+    <% } %>
+    <div class="stack">
+      <a class="btn btn-block" href="/entrar">Soy cliente: ver mi tarjeta</a>
+      <a class="btn btn-secondary btn-block" href="/negocio/entrar?next=<%= encodeURIComponent(next) %>">Trabajo en el negocio</a>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,30 @@
+<%
+  const inPanel = path.startsWith('/panel');
+  const pageTitle = title && title !== config.businessName ? `${title} · ${config.businessName}` : config.businessName;
+%><!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2a6ba2">
+  <meta name="robots" content="noindex">
+  <title><%= pageTitle %></title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="<%= inPanel ? 'has-nav' : '' %>">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/"><img src="/images/logo.png" alt="" width="34" height="41"><span><%= inPanel ? 'Panel del negocio' : config.businessName %></span></a>
+    <span class="spacer"></span>
+    <% if (inPanel && businessUser) { %>
+      <form method="post" action="/negocio/salir"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-link small" type="submit">Salir</button></form>
+    <% } else if (!inPanel && customer) { %>
+      <form method="post" action="/salir"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-link small" type="submit">Cerrar sesión</button></form>
+    <% } %>
+  </div>
+</header>
+<main class="main" id="contenido">
+<%- include('flash') %>

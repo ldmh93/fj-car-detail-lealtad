@@ -1,0 +1,34 @@
+<%- include('../partials/head') %>
+<% const pending = card.status === 'reward_pending'; %>
+<div class="narrow">
+  <div class="card center">
+    <p class="muted small">
+      <%= via === 'qr' ? 'Identificado por QR' : via === 'nfc' ? 'Identificado por etiqueta NFC' : 'Seleccionado manualmente' %>
+    </p>
+    <p class="muted">¿Es este cliente?</p>
+    <div class="confirm-name"><%= target.name %></div>
+    <p class="muted">Teléfono <%= fmt.maskPhone(target.phone) %></p>
+    <%- include('../partials/stamps', { stamps: card.stamps }) %>
+    <p class="progress-text"><%= card.stamps %> de 10 sellos</p>
+  </div>
+
+  <% if (pending) { %>
+    <div class="alert alert-reward" role="status">
+      <strong>Tiene una recompensa disponible</strong>
+      Canjéala para iniciar una tarjeta nueva. Mientras tanto no se agregan sellos.
+    </div>
+    <a class="btn btn-lg btn-block btn-reward" href="/panel/cliente/<%= target.id %>/canjear"><%- include('../partials/icon', { name: 'gift' }) %>Canjear recompensa</a>
+  <% } else { %>
+    <form method="post" action="/panel/cliente/<%= target.id %>/sello" data-busy>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="request_id" value="<%= requestId %>">
+      <input type="hidden" name="expected_stamps" value="<%= card.stamps %>">
+      <input type="hidden" name="via" value="<%= via %>">
+      <p class="center">Confirma que el servicio se realizó antes de agregar el sello.</p>
+      <button class="btn btn-lg btn-block btn-ok" type="submit"><%- include('../partials/icon', { name: 'check' }) %>Confirmar y agregar 1 sello</button>
+    </form>
+    <% if (card.stamps === 9) { %><p class="center small muted">Con este sello completa su tarjeta y obtiene <%= config.rewardText %>.</p><% } %>
+  <% } %>
+  <p class="center mt"><a href="/panel/cliente/<%= target.id %>">No es este cliente / ver detalle</a></p>
+</div>
+<%- include('../partials/foot') %>

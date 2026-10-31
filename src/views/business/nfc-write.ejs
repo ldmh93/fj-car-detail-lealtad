@@ -1,0 +1,34 @@
+<%- include('../partials/head') %>
+<p><a href="/panel/cliente/<%= target.id %>/nfc">← Etiquetas de <%= target.name %></a></p>
+<h1>Grabar etiqueta NFC</h1>
+<p class="muted"><%= tag.label || `Etiqueta #${tag.id}` %> · <%= target.name %></p>
+
+<section class="card" data-nfc-write data-url="<%= url %>">
+  <div data-nfc-supported hidden>
+    <div class="nfc-pulse" data-nfc-pulse><%- include('../partials/icon', { name: 'nfc' }) %></div>
+    <p class="center" data-nfc-status>Toca “Grabar” y acerca la etiqueta a la parte trasera del teléfono hasta ver la confirmación.</p>
+    <button class="btn btn-lg btn-block" type="button" data-nfc-write-start>Grabar etiqueta</button>
+  </div>
+  <div data-nfc-unsupported hidden>
+    <h2>Este teléfono no puede grabar desde la web</h2>
+    <p>Web NFC solo funciona en Chrome para Android con NFC activado. Puedes grabar la etiqueta con una app gratuita (por ejemplo “NFC Tools”):</p>
+    <ol>
+      <li>Copia el enlace de abajo.</li>
+      <li>En la app elige <em>Escribir → Agregar registro → URL/URI</em> y pega el enlace.</li>
+      <li>Toca <em>Escribir</em> y acerca la etiqueta.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Enlace de la etiqueta</h2>
+  <p class="small muted">Es lo único que se guarda en la etiqueta.</p>
+  <div class="copy-row">
+    <label class="visually-hidden" for="tag-url">Enlace de la etiqueta</label>
+    <input id="tag-url" type="text" readonly value="<%= url %>">
+    <button class="btn" type="button" data-copy="#tag-url"><%- include('../partials/icon', { name: 'copy' }) %><span>Copiar</span></button>
+  </div>
+  <p class="small muted mt">Para probarla: con tu sesión del panel abierta, acerca la etiqueta al teléfono o usa “Leer NFC” en Escanear. Debe abrir la confirmación de <%= target.name %>.</p>
+</section>
+<a class="btn btn-secondary btn-block" href="/panel/cliente/<%= target.id %>">Listo</a>
+<%- include('../partials/foot', { scripts: ['/js/nfc-write.js'] }) %>

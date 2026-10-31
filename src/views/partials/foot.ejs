@@ -1,0 +1,24 @@
+</main>
+<% if (path.startsWith('/panel') && businessUser) {
+  const nav = [
+    { href: '/panel', label: 'Inicio', icon: 'home', match: (p) => p === '/panel' },
+    { href: '/panel/escanear', label: 'Escanear', icon: 'qr', match: (p) => p.startsWith('/panel/escanear') },
+    { href: '/panel/clientes', label: 'Clientes', icon: 'users', match: (p) => p.startsWith('/panel/clientes') || p.startsWith('/panel/cliente/') },
+    { href: '/panel/compartir', label: 'Compartir', icon: 'share', match: (p) => p.startsWith('/panel/compartir') },
+  ];
+%>
+<nav class="bottom-nav" aria-label="Menú del panel">
+  <ul>
+    <% nav.forEach((n) => { %>
+      <li><a href="<%= n.href %>" <%- n.match(path) ? 'aria-current="page"' : '' %>><%- include('icon', { name: n.icon }) %><%= n.label %></a></li>
+    <% }) %>
+  </ul>
+</nav>
+<% } else { %>
+<footer class="footer"><%= config.businessName %> · Tarjeta de lealtad digital</footer>
+<% } %>
+<script src="/js/app.js" defer></script>
+<% if (typeof scripts !== 'undefined') { scripts.forEach((s) => { %><script src="<%= s %>" defer></script>
+<% }) } %>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<%- include('../partials/head') %>
+<% const pending = card.status === 'reward_pending'; const isOwner = businessUser.role === 'owner'; %>
+<p><a href="/panel/clientes">← Clientes</a></p>
+<h1><%= target.name %></h1>
+<p class="muted"><a href="tel:+<%= target.phone.length === 10 ? '52' + target.phone : target.phone %>"><%= fmt.formatPhone(target.phone) %></a> · Cliente desde <%= fmt.date(target.created_at) %></p>
+
+<% if (tempPassword) { %>
+  <div class="card">
+    <h2>Contraseña temporal</h2>
+    <p>Dísela al cliente. Solo se muestra esta vez; con ella podrá entrar a su tarjeta.</p>
+    <div class="temp-pass"><%= tempPassword %></div>
+  </div>
+<% } %>
+
+<% if (pending && reward) { %>
+  <div class="alert alert-reward" role="status">
+    <strong>Recompensa disponible</strong>
+    Completó su tarjeta el <%= fmt.date(reward.issued_at) %>. Puede canjear <%= config.rewardText %>.
+  </div>
+<% } %>
+
+<section class="loyalty-card">
+  <%- include('../partials/stamps', { stamps: card.stamps }) %>
+  <p class="progress-text"><%= card.stamps %> de 10 sellos<%= pending ? ' · recompensa disponible' : '' %></p>
+</section>
+
+<div class="stack">
+  <% if (pending) { %>
+    <a class="btn btn-lg btn-block btn-reward" href="/panel/cliente/<%= target.id %>/canjear"><%- include('../partials/icon', { name: 'gift' }) %>Canjear recompensa</a>
+  <% } else { %>
+    <a class="btn btn-lg btn-block" href="/panel/cliente/<%= target.id %>/sello?via=manual"><%- include('../partials/icon', { name: 'plus' }) %>Agregar sello</a>
+  <% } %>
+</div>
+
+<div class="tiles mt">
+  <div class="tile"><span class="n"><%= stats.visits %></span><span class="l">visitas</span></div>
+  <div class="tile"><span class="n"><%= stats.redeemed %></span><span class="l">canjeadas</span></div>
+  <div class="tile"><span class="n"><%= stats.last_visit ? fmt.shortDate(stats.last_visit) : '—' %></span><span class="l">última visita</span></div>
+</div>
+
+<section class="card">
+  <h2>Historial</h2>
+  <% if (!events.length) { %>
+    <p class="muted">Sin movimientos todavía.</p>
+  <% } else { %>
+    <ul class="timeline">
+      <% events.forEach((e) => { %>
+        <li>
+          <div>
+            <div class="what"><%= fmt.eventLabel(e) %></div>
+            <div class="meta"><%= fmt.dateTime(e.created_at) %> · <%= e.user_name || 'Sistema' %></div>
+            <% if (e.reason) { %><div class="reason">Motivo: <%= e.reason %></div><% } %>
+          </div>
+          <span class="badge badge-muted"><%= e.stamps_after %>/10</span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Identificación</h2>
+  <p class="small muted">El QR del cliente aparece en su tarjeta. Las etiquetas NFC son opcionales.</p>
+  <a class="btn btn-secondary btn-block" href="/panel/cliente/<%= target.id %>/nfc"><%- include('../partials/icon', { name: 'nfc' }) %>Etiquetas NFC (<%= activeTags %> activa<%= activeTags === 1 ? '' : 's' %>)</a>
+</section>
+
+<details class="card more">
+  <summary>Más opciones</summary>
+  <div class="stack">
+    <% if (isOwner) { %>
+      <a class="btn btn-secondary btn-block" href="/panel/cliente/<%= target.id %>/correccion">Corregir sellos</a>
+    <% } %>
+    <form method="post" action="/panel/cliente/<%= target.id %>/contrasena" data-confirm="¿Generar una contraseña temporal para <%= target.name %>? La contraseña actual dejará de funcionar.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="btn btn-secondary btn-block" type="submit">Dar contraseña temporal</button>
+    </form>
+    <form method="post" action="/panel/cliente/<%= target.id %>/qr/regenerar" data-confirm="¿Reemplazar el QR de <%= target.name %>? El código anterior dejará de funcionar.">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="btn btn-danger btn-block" type="submit">Reemplazar QR (si se compartió por error)</button>
+    </form>
+    <% if (adminLog.length) { %>
+      <h3>Registro administrativo</h3>
+      <ul class="timeline small">
+        <% const labels = { qr_regenerated: 'QR reemplazado', nfc_linked: 'Etiqueta NFC vinculada', nfc_revoked: 'Etiqueta NFC revocada', customer_password_reset: 'Contraseña temporal generada' }; %>
+        <% adminLog.forEach((a) => { %>
+          <li><span><%= labels[a.action] || a.action %><%= a.details ? ` (${a.details})` : '' %></span><span class="meta"><%= fmt.dateTime(a.created_at) %> · <%= a.user_name || '—' %></span></li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</details>
+<%- include('../partials/foot') %>

@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<% const pending = card.status === 'reward_pending'; const left = 10 - card.stamps; %>
+<h1>Hola, <%= customer.name.split(' ')[0] %></h1>
+
+<% if (pending) { %>
+  <div class="alert alert-reward" role="status">
+    <strong>¡Completaste tu tarjeta!</strong>
+    Tienes <%= config.rewardText %>. Muestra esta pantalla en tu próxima visita para canjearlo.
+  </div>
+<% } %>
+
+<section class="loyalty-card" aria-labelledby="card-title" data-card-status data-stamps="<%= card.stamps %>" data-status="<%= card.status %>" data-cycle="<%= card.cycle %>">
+  <div class="head">
+    <img src="/images/logo.png" alt="" width="44" height="53">
+    <div>
+      <div class="who" id="card-title"><%= config.businessName %></div>
+      <div class="small muted">Tarjeta de lealtad · <%= customer.name %></div>
+    </div>
+  </div>
+  <%- include('../partials/stamps', { stamps: card.stamps }) %>
+  <p class="progress-text">
+    <% if (pending) { %>10 de 10 sellos · recompensa disponible
+    <% } else if (card.stamps === 0) { %>Aún no tienes sellos. ¡Tu primera visita cuenta!
+    <% } else { %>Llevas <%= card.stamps %> de 10 sellos. Te <%= left === 1 ? 'falta 1' : `faltan ${left}` %> para <%= config.rewardText %>.<% } %>
+  </p>
+</section>
+
+<section class="card qr-box" aria-labelledby="qr-title">
+  <h2 id="qr-title">Tu código para cada visita</h2>
+  <%- qrSvg %>
+  <p class="muted small">Al llegar, muestra este código. El personal lo escanea y, después de confirmar tu servicio, agrega tu sello.</p>
+  <p class="small muted" data-live-note hidden>Tu tarjeta se actualiza sola mientras tienes esta pantalla abierta.</p>
+</section>
+
+<div class="card">
+  <div class="tiles tiles-2">
+    <div class="tile"><span class="n"><%= stats.visits %></span><span class="l">visitas registradas</span></div>
+    <div class="tile"><span class="n"><%= stats.redeemed %></span><span class="l">recompensas canjeadas</span></div>
+  </div>
+  <a class="btn btn-secondary btn-block mt" href="/mi-tarjeta/historial"><%- include('../partials/icon', { name: 'history' }) %>Ver mi historial</a>
+</div>
+<p class="small muted center">Consejo: agrega esta página a la pantalla de inicio de tu celular para abrirla más rápido.</p>
+<%- include('../partials/foot', { scripts: ['/js/card.js'] }) %>

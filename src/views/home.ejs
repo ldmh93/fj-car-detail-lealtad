@@ -1,0 +1,12 @@
+<%- include('partials/head') %>
+<div class="narrow center">
+  <img class="hero-logo" src="/images/logo.png" alt="Logo de <%= config.businessName %>" width="110" height="132">
+  <h1>Tu tarjeta de lealtad</h1>
+  <p class="muted">Junta 10 sellos con tus visitas y recibe <strong><%= config.rewardText %></strong>. Sin descargar aplicaciones: todo funciona desde el navegador de tu celular.</p>
+  <div class="card stack">
+    <a class="btn btn-lg btn-block" href="/registro">Crear mi tarjeta</a>
+    <a class="btn btn-secondary btn-block" href="/entrar">Ya tengo cuenta: entrar</a>
+  </div>
+  <p class="small"><a href="/negocio/entrar">Acceso del negocio</a></p>
+</div>
+<%- include('partials/foot') %>

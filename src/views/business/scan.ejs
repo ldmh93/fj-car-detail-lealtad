@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<h1>Identificar cliente</h1>
+<% if (error === 'desconocido') { %>
+  <div class="alert alert-error" role="alert">Ese código no corresponde a ninguna tarjeta activa (puede haber sido reemplazado). Busca al cliente por nombre o teléfono.</div>
+<% } else if (error === 'formato') { %>
+  <div class="alert alert-error" role="alert">El código leído no es una tarjeta de este negocio.</div>
+<% } %>
+
+<section class="card" id="qr" aria-labelledby="qr-title">
+  <h2 id="qr-title">Escanear QR</h2>
+  <p class="muted small">Pide al cliente que abra su tarjeta y apunta la cámara a su código.</p>
+  <div class="scanner" data-scanner hidden>
+    <video playsinline muted></video>
+    <div class="frame"></div>
+    <div class="status" data-scanner-status>Buscando código…</div>
+  </div>
+  <div class="alert alert-warn" data-camera-unavailable hidden></div>
+  <div class="row">
+    <button class="btn btn-lg grow" type="button" data-scan-start><%- include('../partials/icon', { name: 'camera' }) %>Abrir cámara</button>
+    <button class="btn btn-secondary grow" type="button" data-scan-stop hidden>Detener</button>
+  </div>
+</section>
+
+<section class="card" id="nfc" aria-labelledby="nfc-title">
+  <h2 id="nfc-title">Leer etiqueta NFC</h2>
+  <div data-nfc-supported hidden>
+    <div class="nfc-pulse" data-nfc-pulse><%- include('../partials/icon', { name: 'nfc' }) %></div>
+    <p class="center" data-nfc-status>Toca el botón y acerca la etiqueta a la parte trasera del teléfono.</p>
+    <button class="btn btn-lg btn-block" type="button" data-nfc-start>Leer etiqueta</button>
+  </div>
+  <div data-nfc-unsupported hidden>
+    <p>Este teléfono o navegador no permite leer NFC desde la web (por ejemplo, iPhone o navegadores distintos de Chrome en Android).</p>
+    <p class="muted small">Alternativa: con la pantalla desbloqueada, acerca la etiqueta al teléfono. Si está programada, abrirá la tarjeta del cliente y aquí podrás confirmar la visita. También puedes buscarlo abajo.</p>
+  </div>
+</section>
+
+<form class="card" method="get" action="/panel/clientes" role="search">
+  <h2>Buscar manualmente</h2>
+  <div class="search">
+    <label class="visually-hidden" for="q">Nombre o teléfono</label>
+    <input id="q" name="q" type="search" placeholder="Nombre o teléfono" autocomplete="off">
+    <button class="btn" type="submit" aria-label="Buscar"><%- include('../partials/icon', { name: 'search' }) %></button>
+  </div>
+</form>
+<%- include('../partials/foot', { scripts: ['/js/vendor/jsQR.js', '/js/scan.js'] }) %>

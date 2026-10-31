@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<div class="narrow">
+  <img class="hero-logo" src="/images/logo.png" alt="Logo de <%= config.businessName %>" width="110" height="132">
+  <h1 class="center">Crea tu tarjeta de lealtad</h1>
+  <p class="center muted">Por cada visita recibes un sello. Con 10 sellos obtienes <strong><%= config.rewardText %></strong>.</p>
+  <form class="card" method="post" action="/registro" novalidate data-busy>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="field <%= errors.name ? 'has-error' : '' %>">
+      <label for="name">Tu nombre</label>
+      <input id="name" name="name" type="text" autocomplete="name" maxlength="60" required value="<%= values.name || '' %>">
+      <% if (errors.name) { %><div class="error"><%= errors.name %></div><% } %>
+    </div>
+    <div class="field <%= errors.phone ? 'has-error' : '' %>">
+      <label for="phone">Teléfono celular</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" required value="<%= values.phone || '' %>">
+      <div class="hint">Lo usarás para entrar. 10 dígitos.</div>
+      <% if (errors.phone) { %><div class="error"><%= errors.phone %><% if (typeof phoneTaken !== 'undefined' && phoneTaken) { %> <a href="/entrar">Entrar</a><% } %></div><% } %>
+    </div>
+    <div class="field <%= errors.password ? 'has-error' : '' %>">
+      <label for="password">Crea una contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="6" required>
+      <div class="hint">Mínimo 6 caracteres.</div>
+      <% if (errors.password) { %><div class="error"><%= errors.password %></div><% } %>
+    </div>
+    <div class="field <%= errors.password2 ? 'has-error' : '' %>">
+      <label for="password2">Repite la contraseña</label>
+      <input id="password2" name="password2" type="password" autocomplete="new-password" required>
+      <% if (errors.password2) { %><div class="error"><%= errors.password2 %></div><% } %>
+    </div>
+    <button class="btn btn-lg btn-block" type="submit">Crear mi tarjeta</button>
+    <p class="small muted center mt">Solo guardamos tu nombre y teléfono para identificar tu tarjeta.</p>
+  </form>
+  <p class="center">¿Ya tienes cuenta? <a href="/entrar">Entra aquí</a></p>
+</div>
+<%- include('../partials/foot') %>
