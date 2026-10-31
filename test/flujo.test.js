@@ -11,6 +11,9 @@ const assert = require('node:assert/strict');
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lealtad-test-'));
 process.env.DATABASE_PATH = path.join(tmp, 'test.sqlite');
+// Nunca usar la base real de Turso aunque esté configurada en .env.
+process.env.TURSO_DATABASE_URL = '';
+process.env.TURSO_AUTH_TOKEN = '';
 process.env.SESSION_SECRET = 'x'.repeat(48);
 process.env.BASE_URL = 'https://lealtad.ejemplo.com';
 process.env.NODE_ENV = 'test';
