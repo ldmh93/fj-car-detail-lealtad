@@ -132,6 +132,10 @@ test('inicio de sesión del negocio', async () => {
   const panel = await dueno.get('/panel');
   assert.equal(panel.status, 200);
   assert.match(panel.text, /https:\/\/lealtad\.ejemplo\.com\/registro/);
+  const cartel = await dueno.get('/panel/compartir');
+  assert.equal(cartel.status, 200);
+  assert.match(cartel.text, /lealtad\.ejemplo\.com</);
+  assert.doesNotMatch(cartel.text, /no funcionará en los celulares/);
   await ayudante.post('/negocio/entrar', '/negocio/entrar', { username: 'ayudante', password: 'clave-segura-456' });
 });
 

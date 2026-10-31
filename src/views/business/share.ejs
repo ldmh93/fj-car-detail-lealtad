@@ -1,12 +1,15 @@
 <%- include('../partials/head') %>
 <h1 class="no-print">Compartir el registro</h1>
+<% if (isLocal) { %>
+  <div class="alert alert-warn no-print" role="alert"><strong>Este QR no funcionará en los celulares de tus clientes.</strong> Apunta a <%= posterUrl %>, que solo existe en esta computadora. Imprime el cartel desde la app publicada.</div>
+<% } %>
 <section class="card qr-box print">
   <img src="/images/logo.png" alt="Logo de <%= config.businessName %>" width="90" height="108">
   <h2><%= config.businessName %></h2>
   <p><strong>Junta 10 sellos y recibe <%= config.rewardText %>.</strong></p>
   <%- qrSvg %>
-  <p>Escanea con la cámara de tu celular para crear tu tarjeta de lealtad.</p>
-  <p class="small muted"><%= signupUrl %></p>
+  <p>Escanea con la cámara de tu celular para <strong>crear tu tarjeta</strong> o <strong>ver tus sellos</strong>.</p>
+  <p class="small muted"><%= posterUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') %></p>
 </section>
 <div class="card no-print stack">
   <button class="btn btn-block" type="button" data-print><%- include('../partials/icon', { name: 'print' }) %>Imprimir este cartel</button>

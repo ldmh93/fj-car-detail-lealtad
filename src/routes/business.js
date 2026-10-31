@@ -35,8 +35,17 @@ router.get('/panel', async (req, res) => {
 
 router.get('/panel/compartir', async (req, res, next) => {
   try {
-    const qrSvg = await QRCode.toString(signupUrl(), { type: 'svg', margin: 2, color: { dark: '#10324f', light: '#ffffff' } });
-    res.render('business/share', { title: 'Compartir registro', signupUrl: signupUrl(), qrSvg, shareText: shareText() });
+    // El cartel lleva a la página de inicio: ahí el cliente crea su tarjeta o entra a la suya.
+    const posterUrl = `${config.baseUrl}/`;
+    const qrSvg = await QRCode.toString(posterUrl, { type: 'svg', margin: 2, color: { dark: '#10324f', light: '#ffffff' } });
+    res.render('business/share', {
+      title: 'Compartir registro',
+      posterUrl,
+      signupUrl: signupUrl(),
+      qrSvg,
+      shareText: shareText(),
+      isLocal: /^https?:\/\/(localhost|127\.|192\.168\.|10\.)/.test(config.baseUrl),
+    });
   } catch (err) {
     next(err);
   }
