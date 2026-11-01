@@ -9,7 +9,7 @@
   </div>
 <% } %>
 
-<section class="loyalty-card" aria-labelledby="card-title" data-card-status data-stamps="<%= card.stamps %>" data-status="<%= card.status %>" data-cycle="<%= card.cycle %>">
+<section class="loyalty-card" aria-labelledby="card-title" data-card-status data-stamps="<%= card.stamps %>" data-status="<%= card.status %>" data-cycle="<%= card.cycle %>" data-reward="<%= config.rewardText %>" data-business="<%= config.businessName %>">
   <div class="head">
     <img src="/images/logo.png" alt="" width="44" height="53">
     <div>
@@ -40,4 +40,4 @@
   <a class="btn btn-secondary btn-block mt" href="/mi-tarjeta/historial"><%- include('../partials/icon', { name: 'history' }) %>Ver mi historial</a>
 </div>
 <p class="small muted center">Consejo: agrega esta página a la pantalla de inicio de tu celular para abrirla más rápido.</p>
-<%- include('../partials/foot', { scripts: ['/js/card.js'] }) %>
+<%- include('../partials/foot', { scripts: ['/js/celebration.js', '/js/card.js'] }) %>

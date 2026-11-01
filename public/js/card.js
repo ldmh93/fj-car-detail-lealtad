@@ -18,8 +18,21 @@
   try { prev = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { prev = null; }
   try { localStorage.setItem(KEY, JSON.stringify({ cycle: cycle, stamps: stamps })); } catch (e) {}
 
-  if (prev && prev.cycle === cycle && stamps > prev.stamps) {
-    celebrate(prev.stamps, stamps, status === 'reward_pending');
+  var completed = status === 'reward_pending';
+  var animatedStamps = Boolean(prev && prev.cycle === cycle && stamps > prev.stamps);
+  if (animatedStamps) celebrate(prev.stamps, stamps, completed);
+
+  // Pantalla de felicitación: una sola vez por recompensa (ciclo de tarjeta) en este teléfono.
+  var CELEBRATED = 'fj-celebrated-cycle';
+  var celebrated = null;
+  try { celebrated = localStorage.getItem(CELEBRATED); } catch (e) { celebrated = String(cycle); }
+  if (completed && celebrated !== String(cycle) && window.fjCelebration) {
+    try { localStorage.setItem(CELEBRATED, String(cycle)); } catch (e) {}
+    // Espera a que termine la animación de los sellos (sin animación, aparece casi de inmediato).
+    var wait = animatedStamps && !reduceMotion ? (stamps - prev.stamps - 1) * 180 + 1300 : 400;
+    setTimeout(function () {
+      window.fjCelebration.show({ reward: el.dataset.reward, business: el.dataset.business });
+    }, wait);
   }
 
   function celebrate(from, to, completed) {
@@ -36,20 +49,26 @@
       setTimeout(function () { sparkle(last); }, (added - 1) * 180 + 700);
     }
     var left = 10 - to;
-    var text = completed
-      ? '¡Completaste tu tarjeta! Tienes una recompensa.'
-      : added > 1
+    // Al completar la tarjeta, la pantalla de felicitación sustituye al aviso.
+    if (completed) {
+      vibrate([60, 60, 120]);
+      return;
+    }
+    var text = added > 1
         ? '¡' + added + ' sellos nuevos! Llevas ' + to + ' de 10.'
         : '¡Nuevo sello! Llevas ' + to + ' de 10' + (left === 1 ? '. ¡Te falta 1!' : '.');
-    toast(text, completed);
-    // El navegador solo permite vibrar si la persona ya tocó la pantalla.
-    var canVibrate = navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive);
-    if (canVibrate) navigator.vibrate(completed ? [60, 60, 120] : 60);
+    toast(text);
+    vibrate(60);
   }
 
-  function toast(text, gold) {
+  // El navegador solo permite vibrar si la persona ya tocó la pantalla.
+  function vibrate(pattern) {
+    if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(pattern);
+  }
+
+  function toast(text) {
     var t = document.createElement('div');
-    t.className = 'stamp-toast' + (gold ? ' gold' : '');
+    t.className = 'stamp-toast';
     t.setAttribute('role', 'status');
     t.textContent = text;
     document.body.appendChild(t);
