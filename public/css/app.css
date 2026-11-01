@@ -177,7 +177,7 @@ textarea { min-height: 90px; resize: vertical; }
 
 /* ---------- Tarjeta de sellos ---------- */
 .loyalty-card {
-  position: relative; overflow: hidden;
+  position: relative;
   background:
     radial-gradient(420px 220px at 110% -20%, rgba(74, 147, 204, 0.35), transparent 60%),
     linear-gradient(150deg, #18375a 0%, #10243a 50%, #0b1828 100%);
@@ -189,7 +189,7 @@ textarea { min-height: 90px; resize: vertical; }
 }
 /* Brillo diagonal sutil, como una tarjeta física */
 .loyalty-card::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
   background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.05) 45%, transparent 55%);
 }
 .loyalty-card .head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -394,3 +394,55 @@ details.more summary { cursor: pointer; font-weight: 600; color: var(--brand-lig
   .hero-logo { animation: none; }
 }
 @media print { .splash { display: none !important; } }
+
+/* ---------- Animación de sello nuevo (tarjeta del cliente) ---------- */
+.stamp { position: relative; }
+.stamp.just-stamped { animation: stamp-pop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.4) var(--d, 0s) both; }
+.stamp.just-stamped::after {
+  content: ""; position: absolute; inset: -2px; border-radius: 50%;
+  border: 2px solid rgba(140, 195, 239, 0.9);
+  animation: stamp-ring 0.9s ease-out calc(var(--d, 0s) + 0.15s) both;
+  pointer-events: none;
+}
+.stamp.last.just-stamped::after { border-color: rgba(245, 208, 138, 0.95); }
+.stamp.just-stamped svg path { stroke-dasharray: 24; animation: stamp-check 0.45s ease-out calc(var(--d, 0s) + 0.3s) both; }
+@keyframes stamp-pop {
+  0% { transform: scale(0.2) rotate(-25deg); opacity: 0; }
+  55% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+  75% { transform: scale(0.94) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes stamp-ring { 0% { transform: scale(0.9); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes stamp-check { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+
+.sparkles { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.sparkles i {
+  position: absolute; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%;
+  background: radial-gradient(circle, #fff6dc 0%, var(--gold) 60%, transparent 70%);
+  box-shadow: 0 0 8px rgba(245, 208, 138, 0.9);
+  animation: sparkle-fly 1s ease-out both;
+}
+@keyframes sparkle-fly {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+.stamp-toast {
+  position: fixed; left: 50%; top: calc(70px + env(safe-area-inset-top)); z-index: 50;
+  transform: translateX(-50%);
+  width: max-content; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 99px;
+  background: linear-gradient(180deg, #2f7ab8, #245f94); color: #fff; font-weight: 700; font-size: 0.95rem;
+  border: 1px solid rgba(140, 195, 239, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 24px rgba(74, 147, 204, 0.45);
+  animation: toast-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.2s both;
+  text-align: center;
+}
+.stamp-toast.gold { background: linear-gradient(180deg, #e2b562, var(--gold-2)); color: #1d1405; border-color: rgba(245, 208, 138, 0.6); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 26px rgba(212, 164, 74, 0.5); }
+.stamp-toast.out { animation: toast-out 0.5s ease forwards; }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, -14px) scale(0.95); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes toast-out { to { opacity: 0; transform: translate(-50%, -10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp.just-stamped, .stamp.just-stamped::after, .stamp.just-stamped svg path, .stamp-toast { animation: none; }
+}
